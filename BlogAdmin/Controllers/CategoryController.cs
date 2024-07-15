@@ -11,22 +11,26 @@ namespace BlogAdmin.Controllers
         private readonly BlogContext _context;
         private readonly ILogger<CategoryController> _logger;
 
+        // Constructor to initialize the BlogContext and ILogger
         public CategoryController(BlogContext context, ILogger<CategoryController> logger)
         {
             _context = context;
             _logger = logger;
         }
 
+        // Action to display the list of categories
         public async Task<IActionResult> Index()
         {
             return View(await _context.Categories.ToListAsync());
         }
 
+        // Action to render the create category view
         public IActionResult Create()
         {
             return View();
         }
 
+        // Action to handle the creation of a new category
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Title")] Category category)
@@ -40,6 +44,7 @@ namespace BlogAdmin.Controllers
             return View(category);
         }
 
+        // Action to render the edit category view
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -55,6 +60,7 @@ namespace BlogAdmin.Controllers
             return View(category);
         }
 
+        // Action to handle the editing of a category
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Title")] Category category)
@@ -87,6 +93,7 @@ namespace BlogAdmin.Controllers
             return View(category);
         }
 
+        // Action to render the delete category view
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -104,6 +111,7 @@ namespace BlogAdmin.Controllers
             return View(category);
         }
 
+        // Action to handle the deletion of a category
         [HttpPost, ActionName("DeleteConfirmed")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -118,6 +126,7 @@ namespace BlogAdmin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // Helper method to check if a category exists
         private bool CategoryExists(int id)
         {
             return _context.Categories.Any(e => e.Id == id);

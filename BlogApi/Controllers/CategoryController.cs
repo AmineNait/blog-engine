@@ -12,11 +12,14 @@ namespace BlogApi.Controllers
     {
         private readonly BlogContext _context;
 
+        // Constructor to initialize the BlogContext
         public CategoryController(BlogContext context)
         {
             _context = context;
         }
 
+        // GET: api/Category
+        // Retrieves all categories from the database
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Category>>> GetAllCategories()
         {
@@ -24,6 +27,8 @@ namespace BlogApi.Controllers
             return Ok(categories);
         }
 
+        // GET: api/Category/{id}
+        // Retrieves a specific category by ID
         [HttpGet("{id}")]
         public async Task<ActionResult<Category>> GetCategoryById(int id)
         {
@@ -37,6 +42,8 @@ namespace BlogApi.Controllers
             return Ok(category);
         }
 
+        // POST: api/Category
+        // Creates a new category
         [HttpPost]
         public async Task<ActionResult<Category>> CreateCategory(Category category)
         {
@@ -51,6 +58,8 @@ namespace BlogApi.Controllers
             return CreatedAtAction(nameof(GetCategoryById), new { id = category.Id }, category);
         }
 
+        // PUT: api/Category/{id}
+        // Updates an existing category
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateCategory(int id, Category category)
         {
@@ -85,6 +94,8 @@ namespace BlogApi.Controllers
             return NoContent();
         }
 
+        // DELETE: api/Category/{id}
+        // Deletes a specific category by ID
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategoryById(int id)
         {
@@ -100,6 +111,7 @@ namespace BlogApi.Controllers
             return NoContent();
         }
 
+        // Helper method to check if a category exists
         private bool CategoryExists(int id)
         {
             return _context.Categories.Any(e => e.Id == id);

@@ -6,8 +6,10 @@ using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Determine the environment (default to Production)
 string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
 
+// Configure the database context based on the environment
 if (environment == "Test")
 {
     builder.Services.AddDbContext<BlogContext>(options =>
@@ -19,16 +21,14 @@ else
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 }
 
-// Ajouter les services aux conteneurs
+// Add services to the container
 builder.Services.AddControllers();
-
-// Ajouter et configurer Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configurer le pipeline de traitement des requêtes HTTP
+// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment() || environment == "Docker")
 {
     app.UseSwagger();
@@ -44,6 +44,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+// Redirect root URL to Swagger UI
 app.MapGet("/", context =>
 {
     context.Response.Redirect("/swagger");
