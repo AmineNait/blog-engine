@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  blogadmin:
+    build:
+      context: ../..
+      dockerfile: docker/frontend/Dockerfile.blogadmin
+    environment:
+      ASPNETCORE_ENVIRONMENT: Docker
+    ports:
+      - "${BLOG_ENGINE_ADMIN_PORT}:8080"
+    depends_on:
+      - blog-engine-database
+    networks:
+      - blog-engine
+
+volumes:
+  blog-engine-database:
+    external: true
+
+networks:
+  blog-engine:
+    external: true

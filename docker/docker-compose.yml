@@ -1,0 +1,48 @@
+version: "3.8"
+
+services:
+  blogapi:
+    build:
+      context: ../
+      dockerfile: ./docker/backend/Dockerfile.blogapi
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+    ports:
+      - ${BLOG_ENGINE_API_PORT}:8080
+    depends_on:
+      - blog-engine-database
+    networks:
+      - blog-engine
+
+  blogadmin:
+    build:
+      context: ../
+      dockerfile: ./docker/frontend/Dockerfile.blogadmin
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+    ports:
+      - ${BLOG_ENGINE_ADMIN_PORT}:8080
+    depends_on:
+      - blog-engine-database
+    networks:
+      - blog-engine
+
+  blog-engine-database:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      SA_PASSWORD: ${BLOG_ENGINE_DB_PASSWORD}
+      ACCEPT_EULA: "Y"
+    ports:
+      - ${BLOG_ENGINE_DB_PORT}:1433
+    volumes:
+      - blog-engine-database:/var/opt/mssql
+      - ./docker/backend/init-db:/docker-entrypoint-initdb.d
+    networks:
+      - blog-engine
+
+volumes:
+  blog-engine-database:
+
+networks:
+  blog-engine:
+    driver: bridge

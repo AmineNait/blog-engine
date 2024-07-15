@@ -1,0 +1,22 @@
+## Base Image
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+WORKDIR /app
+EXPOSE 80
+
+## Building container
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+COPY ../../BlogAdmin/ ./BlogAdmin/
+WORKDIR /src/BlogAdmin
+RUN dotnet restore "BlogAdmin.csproj"
+RUN dotnet build "BlogAdmin.csproj" -c Release -o /app/build
+
+## Publishing container
+FROM build AS publish
+RUN dotnet publish "BlogAdmin.csproj" -c Release -o /app/publish
+
+## App Container
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "BlogAdmin.dll"]
